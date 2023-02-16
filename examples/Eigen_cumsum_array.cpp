@@ -10,12 +10,12 @@
 #include <numeric>
 #include <Eigen/Dense>
 
-using Eigen::Array33d;
+using Eigen::ArrayXXd;
 
 template <typename Derived> void cumsum(Eigen::ArrayBase<Derived>& a, int dim);
 
 int main() {
-	Array33d m {{1,  2,  3,  4},
+	ArrayXXd m {{1,  2,  3,  4},
 				{5,  6,  7,  8},
 				{9, 10, 11, 12}};
 	

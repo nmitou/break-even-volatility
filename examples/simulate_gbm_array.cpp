@@ -6,6 +6,7 @@
 #include <random>
 #include <Eigen/Dense>
 #include <cmath>
+#include <numeric>
 
 using std::sqrt;
 using std::pow;
