@@ -6,14 +6,13 @@
 #include <random>
 #include <Eigen/Dense>
 #include <cmath>
+#include "../utils.h"
 
 using std::sqrt;
 using std::pow;
 using Eigen::MatrixXd;
 using Eigen::seq;
 using Eigen::all;
-
-template <typename Derived> Derived cumsum(const Eigen::MatrixBase<Derived>& m, int dim);
 
 int main() {
 	std::random_device rd{};
@@ -34,7 +33,7 @@ int main() {
 	// scalar + matrix operations and other element-wise operations than
 	// matrix multiplication...
 	m = ((mu - 0.5*pow(sigma, 2))*dt + sigma*sqrt(dt)*(m.array())).matrix();
-	m = S_0*(cumsum(m, 0).array().exp()).matrix();
+	m = S_0*(eigen_utils::cumsum(m, 0).array().exp()).matrix();
 
 	// matrix S of stock paths where each row represents a stock price path with N+1 data points (including S_0)
 	MatrixXd S(n_stocks, N+1);
@@ -46,26 +45,4 @@ int main() {
 	std::cout << S;
 
 	return 0;
-}
-
-/**
- * Cumulatively sums a matrix over its rows or columns (specified).
- * 
- * @tparam Derived derived class from MatrixBase
- * @param[in] m matrix over which the cumulative sum will be performed
- * @param[in] dim dimension over which to sum, 0 for rows or 1 for columns
- * 
- * @returns Derived matrix class with same shape as input matrix, with cumulative
- * 			sum performed over its rows/columns
- */
-template <typename Derived>
-Derived cumsum(const Eigen::MatrixBase<Derived>& m, int dim) {
-	assert(dim==0 || dim==1);
-	if (dim) {
-		int nr = m.rows();
-		return Eigen::MatrixXd::Ones(nr,nr).triangularView<Eigen::Lower>() * m;
-	} else {
-		int nc = m.cols();
-		return m * Eigen::MatrixXd::Ones(nc,nc).triangularView<Eigen::Upper>();
-	}
 }

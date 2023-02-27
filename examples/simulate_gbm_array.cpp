@@ -31,7 +31,7 @@ int main() {
 
 	Z = (mu - 0.5*pow(sigma, 2))*dt + sigma*sqrt(dt)*Z;
 	// Cumulatively sum over Z's rows 
-	bev_utils::eigen_utils::cumsum(Z, 0);
+	eigen_utils::cumsum(Z, 0);
 
 	// Array S of stock paths where each row represents a stock price path with N+1 data points (including S_0)
 	ArrayXXd S(n_stocks, N+1);

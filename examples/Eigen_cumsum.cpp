@@ -5,13 +5,12 @@
 
 #include <iostream>
 #include <Eigen/Dense>
+#include "../utils.h"
 
 using Eigen::Matrix3d;
 using Eigen::Vector3d;
 using Eigen::RowVector3d;
 using Eigen::MatrixXd;
-
-template <typename Derived> Derived cumsum(const Eigen::MatrixBase<Derived>& m, int dim);
 
 int main() {
 	Matrix3d m {{1,2,3},
@@ -57,38 +56,16 @@ int main() {
 	std::cout << "rv * r =\n" << rv*r << std::endl;
 
 	std::cout << "Using cumsum function:" << std::endl;
-	std::cout << "Row cumsum m =\n" << cumsum(m, 0) << std::endl;
-	std::cout << "Col cumsum m =\n" << cumsum(m, 1) << std::endl;
-	std::cout << "Row cumsum p =\n" << cumsum(p, 0) << std::endl;
-	std::cout << "Col cumsum p =\n" << cumsum(p, 1) << std::endl;
-	std::cout << "Row cumsum cv =\n" << cumsum(cv, 0) << std::endl;
-	std::cout << "Col cumsum cv =\n" << cumsum(cv, 1) << std::endl;
-	std::cout << "Row cumsum rv =\n" << cumsum(rv, 0) << std::endl;
-	std::cout << "Col cumsum rv =\n" << cumsum(rv, 1) << std::endl;
+	std::cout << "Row cumsum m =\n" << eigen_utils::cumsum(m, 0) << std::endl;
+	std::cout << "Col cumsum m =\n" << eigen_utils::cumsum(m, 1) << std::endl;
+	std::cout << "Row cumsum p =\n" << eigen_utils::cumsum(p, 0) << std::endl;
+	std::cout << "Col cumsum p =\n" << eigen_utils::cumsum(p, 1) << std::endl;
+	std::cout << "Row cumsum cv =\n" << eigen_utils::cumsum(cv, 0) << std::endl;
+	std::cout << "Col cumsum cv =\n" << eigen_utils::cumsum(cv, 1) << std::endl;
+	std::cout << "Row cumsum rv =\n" << eigen_utils::cumsum(rv, 0) << std::endl;
+	std::cout << "Col cumsum rv =\n" << eigen_utils::cumsum(rv, 1) << std::endl;
 	// Testing assertion
 	// std::cout << "Col cumsum rv =\n" << cumsum(rv, 2) << std::endl;
 
 	return 0;
-}
-
-/**
- * Cumulatively sums a matrix over its rows or columns (specified).
- * 
- * @tparam Derived derived class from MatrixBase
- * @param[in] m matrix over which the cumulative sum will be performed
- * @param[in] dim dimension over which to sum, 0 for rows or 1 for columns
- * 
- * @returns Derived matrix class with same shape as input matrix, with cumulative
- * 			sum performed over its rows/columns
- */
-template <typename Derived>
-Derived cumsum(const Eigen::MatrixBase<Derived>& m, int dim) {
-	assert(dim==0 || dim==1);
-	if (dim) {
-		int nr = m.rows();
-		return Eigen::MatrixXd::Ones(nr,nr).triangularView<Eigen::Lower>() * m;
-	} else {
-		int nc = m.cols();
-		return m * Eigen::MatrixXd::Ones(nc,nc).triangularView<Eigen::Upper>();
-	}
 }
