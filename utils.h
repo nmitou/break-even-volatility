@@ -24,7 +24,7 @@ namespace eigen_utils
 				std::partial_sum(row.begin(), row.end(), row.begin());
 		}
 	}
-		/**
+	/**
 	 * Cumulatively sums a matrix over its rows or columns (specified).
 	 * 
 	 * @tparam Derived derived class from MatrixBase
@@ -48,6 +48,11 @@ namespace eigen_utils
 }
 
 namespace norm_dbn_utils
+{
+
+}
+
+namespace data_utils 
 {
 
 }
