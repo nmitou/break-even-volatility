@@ -3,6 +3,7 @@
 
 #include <Eigen/Dense>
 #include <numeric>
+#include <string>
 
 namespace eigen_utils 
 {
@@ -54,7 +55,7 @@ namespace norm_dbn_utils
 
 namespace data_utils 
 {
-
+	Eigen::ArrayXXd CSVToEigenArray(std::string csvPath);
 }
 
 #endif
