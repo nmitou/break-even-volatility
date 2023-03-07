@@ -10,13 +10,14 @@ int main() {
 	// std::ifstream csv;
 	// csv.open("example.csv");
 	// or can do:
-	// std::ifstream csv("example.csv");
-
+	std::ifstream csv("example.csv");
 	// std::ifstream csv("example_commas_nodates.csv");
-	std::ifstream csv("example_nodates.csv");
+	// std::ifstream csv("example_nodates.csv");
 
 	if(!csv) {
-		std::cout << "CSV failed to open.";
+		// std::cout << "CSV failed to open.";
+		std::cerr << "File could not be opened." << std::endl;
+		std::cerr << "Error code: " << std::strerror(errno);
 		return 1;
 	}
 
@@ -33,6 +34,7 @@ int main() {
 	// get first line to check if there's a comma
 	std::string line;
 	std::getline(csv, line);
+	unsigned int nRows = 1;
 	
 	int commaPos = line.find(",");
 
@@ -51,16 +53,19 @@ int main() {
 			dates.push_back(cell);
 			std::getline(lineStream, cell);
 			spots.push_back(std::stod(cell));
+			nRows++;
 		}
 	} else { // then csv only has spot price column
 		// again, extract the first line
 		spots.push_back(std::stod(line));
 		// do the remaining lines
-		while(std::getline(csv, line))
+		while(std::getline(csv, line)) {
 			spots.push_back(std::stod(line));
+			nRows++;
+		}
 	}
 
-	Eigen::VectorXd S = Eigen::Map<Eigen::VectorXd>(spots.data(), 4, 1);
+	Eigen::ArrayXXd S = Eigen::Map<Eigen::ArrayXXd>(spots.data(), nRows, 1);
 
 	std::cout << S;
 	
