@@ -1,24 +1,35 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <exception>
 
 #include <vector>
 #include <string>
 #include <Eigen/Dense>
 
-int main() {
-	// std::ifstream csv;
-	// csv.open("example.csv");
-	// or can do:
-	std::ifstream csv("example.csv");
-	// std::ifstream csv("example_commas_nodates.csv");
-	// std::ifstream csv("example_nodates.csv");
+Eigen::ArrayXXd CSVToEigenArr(std::string csvPath) ;
 
+int main() {
+
+	Eigen::ArrayXXd spotData1 = CSVToEigenArr("example.csv");
+	Eigen::ArrayXXd spotData2 = CSVToEigenArr("example_commas_nodates.csv");
+	Eigen::ArrayXXd spotData3 = CSVToEigenArr("example_nodates.csv");
+
+	std::cout << spotData1 << std::endl << '\n';
+	std::cout << spotData2 << std::endl << '\n';
+	std::cout << spotData3 << std::endl << '\n';
+
+	return 0;
+}
+
+Eigen::ArrayXXd CSVToEigenArr(std::string csvPath) {
+	std::ifstream csv(csvPath);
 	if(!csv) {
-		// std::cout << "CSV failed to open.";
 		std::cerr << "File could not be opened." << std::endl;
-		std::cerr << "Error code: " << std::strerror(errno);
-		return 1;
+		std::cerr << "Error code: " << std::strerror(errno) << std::endl;
+		csv.close();
+		// throw;
+		std::terminate(); // as yet, unsure if this is really bad
 	}
 
 	/*
@@ -65,11 +76,6 @@ int main() {
 		}
 	}
 
-	Eigen::ArrayXXd S = Eigen::Map<Eigen::ArrayXXd>(spots.data(), nRows, 1);
-
-	std::cout << S;
-	
 	csv.close();
-
-	return 0;
+	return Eigen::Map<Eigen::ArrayXXd>(spots.data(), nRows, 1);
 }
