@@ -14,8 +14,7 @@ namespace data_utils {
 			std::cerr << "File could not be opened." << std::endl;
 			std::cerr << "Error code: " << std::strerror(errno) << std::endl;
 			csv.close();
-			// throw;
-			std::terminate(); // as yet, unsure if this is really bad
+			std::terminate(); // as yet, unsure if this is really bad. use < throw; > ?
 		}
 
 		std::vector<std::string> dates;
