@@ -1,6 +1,11 @@
 #include "utils.h"
 #include <Eigen/Dense>
 #include <string>
+#include <iostream>
+#include <fstream>
+#include <sstream>
+#include <vector>
+// #include <exception>
 
 namespace data_utils {
 	/* 
@@ -8,7 +13,7 @@ namespace data_utils {
 		Assumes CSV could have two columns of date, spot prices or just one column of 
 		spot prices. Handles both cases and extracts dates from former case for potential
 		future use. */
-	Eigen::ArrayXXd CSVToEigenArr(std::string csvPath) {
+	Eigen::ArrayXXd CSVToEigenArray(std::string csvPath) {
 		std::ifstream csv(csvPath);
 		if(!csv) {
 			std::cerr << "File could not be opened." << std::endl;
