@@ -1,5 +1,5 @@
-#ifndef BEV_UTILS
-#define BEV_UTILS
+#ifndef BEV_UTILS_H
+#define BEV_UTILS_H
 
 #include <Eigen/Dense>
 #include <numeric>
@@ -56,6 +56,11 @@ namespace norm_dbn_utils
 namespace data_utils 
 {
 	Eigen::ArrayXXd CSVToEigenArray(std::string csvPath);
+}
+
+namespace bev_utils {
+	// double RootBySecantMethod() // like newtons but uses approx derivative
+	// double RootByNewtonsMethod() // need derivative of pnl function wrt sigma
 }
 
 #endif
