@@ -14,8 +14,8 @@ namespace bev {
 		date from_date_;
 		date to_date_; */
 		// from and to indices for selecting specific piece out of path
-		int from_idx;
-		int to_idx;
+		// int from_idx;
+		// int to_idx;
 
 	public:
 		BEV(); // constructor
@@ -34,17 +34,17 @@ namespace bev {
 
 		// for solving for bev:
 
-		double DailyDHPnL(double sigma); 
-		double ContinuousDHPnL(double sigma); 
+		// double DailyDHPnL(double sigma, !!! other params); 
+		// double ContinuousDHPnL(double sigma, !!! other params); 
 
 		// creates array/matrix of sub-paths of equal length depending on maturity of specific bev procedure
-		Eigen::ArrayXXd GetSubPaths(Eigen::ArrayXXd path);
+		Eigen::ArrayXXd GetSubPaths(Eigen::ArrayXXd path, int length);
 		// make functions work for single path of matrix/array of paths (decide which dimension for time and path number)
 		// use lambda function of sigma when using this in pnl function
 		// use reference for paths
 		Eigen::ArrayXXd BlackScholesGamma(Eigen::ArrayXXd paths, double strike, double maturity, double interest_rate, double sigma);
 
-		Eigen::ArrayXXd SolveForBEV();
+		Eigen::ArrayXXd SolveForBEV(); // average pnls? flag; check best way for flag variable in c++
 		
 
 	}
