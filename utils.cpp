@@ -9,12 +9,12 @@
 
 namespace data_utils {
 	/* 
-		Function reads CSV from csvPath and outputs an Eigen array of corresponding size.
+		Function reads CSV from csv_path and outputs an Eigen array of corresponding size.
 		Assumes CSV could have two columns of date, spot prices or just one column of 
 		spot prices. Handles both cases and extracts dates from former case for potential
 		future use. */
-	Eigen::ArrayXXd CSVToEigenArray(std::string csvPath) {
-		std::ifstream csv(csvPath);
+	Eigen::ArrayXXd CSVToEigenArray(std::string csv_path) {
+		std::ifstream csv(csv_path);
 		if(!csv) {
 			std::cerr << "File could not be opened." << std::endl;
 			std::cerr << "Error code: " << std::strerror(errno) << std::endl;

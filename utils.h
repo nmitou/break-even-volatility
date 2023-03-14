@@ -55,7 +55,9 @@ namespace norm_dbn_utils
 
 namespace data_utils 
 {
-	Eigen::ArrayXXd CSVToEigenArray(std::string csvPath);
+	// Parses CSV to Eigen array, capabable of handling single column of price data
+	// or two columns of (date, price).
+	Eigen::ArrayXXd CSVToEigenArray(std::string csv_path);
 }
 
 namespace bev_utils {
