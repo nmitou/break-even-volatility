@@ -3,6 +3,7 @@
 
 #include <Eigen/Dense>
 #include <vector>
+#include <string>
 
 namespace bev {
 	class BEV {
@@ -18,9 +19,9 @@ namespace bev {
 		// int to_idx;
 
 	public:
-		BEV(); // constructor
-		BEV(Eigen::ArrayXXd path); // constructor with data/path
-		BEV(Eigen::ArrayXXd path, double interest_rate, std::vector strikes, std::vector maturities); // for surface, can put one element vectors for single bev result or 1-elm maturity vec for single skew
+		BEV() {}; // default constructor
+		BEV(std::string csv_path); // constructor with filepath to csv data
+		BEV(std::string csv_path, double interest_rate, std::vector strikes, std::vector maturities); // for surface, can put one element vectors for single bev result or 1-elm maturity vec for single skew
 
 		// Setters:
 		void SetData(); 
@@ -37,8 +38,11 @@ namespace bev {
 		// double DailyDHPnL(double sigma, !!! other params); 
 		// double ContinuousDHPnL(double sigma, !!! other params); 
 
-		// creates array/matrix of sub-paths of equal length depending on maturity of specific bev procedure
-		Eigen::ArrayXXd GetSubPaths(Eigen::ArrayXXd path, int length);
+		/*	
+		Creates an array of subpaths (rows) of length 21 (days) * term_in_months, with the number of rows 
+		depending on the size of the sample data and the corresponding term	parameter entered. */
+		Eigen::ArrayXXd GetSubPaths(Eigen::ArrayXXd& path, int term_in_months);
+
 		// make functions work for single path of matrix/array of paths (decide which dimension for time and path number)
 		// use lambda function of sigma when using this in pnl function
 		// use reference for paths
