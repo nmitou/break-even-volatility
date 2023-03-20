@@ -46,11 +46,18 @@ namespace eigen_utils
 			return m * Eigen::MatrixXd::Ones(nc,nc).triangularView<Eigen::Upper>();
 		}
 	}
+
+	// Probability density function for normal distribution applied element-wise to array
+	template <typename Derived>
+	Derived NormPDF(const Eigen::ArrayBase<Derived>& a, const double& mu = 0, const double& sigma = 1) {
+		return (1 / (sigma * std::sqrt(2*M_PI))) * ((-0.5 * (((a - mu) / sigma).pow(2))).exp());
+	}
 }
 
 namespace norm_dbn_utils
 {
-
+	// PDF for normal distribution
+	double NormalProbabilityDensityFunction(double& x, double& mu, double& sigma);
 }
 
 namespace data_utils 

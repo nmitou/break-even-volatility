@@ -5,6 +5,7 @@
 #include <fstream>
 #include <sstream>
 #include <vector>
+#include <cmath>
 // #include <exception>
 
 namespace data_utils {
@@ -61,5 +62,13 @@ namespace data_utils {
 
 		csv.close();
 		return Eigen::Map<Eigen::ArrayXXd>(spots.data(), nRows, 1);
+	}
+}
+
+namespace norm_dbn_utils
+{
+	// PDF for normal distribution
+	double NormalProbabilityDensityFunction(double& x, double& mu, double& sigma) {
+		return (1.0 / (sigma * std::sqrt(2 * M_PI))) * std::exp(-0.5 * std::pow((x - mu) / sigma, 2));
 	}
 }
