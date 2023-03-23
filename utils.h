@@ -4,6 +4,7 @@
 #include <Eigen/Dense>
 #include <numeric>
 #include <string>
+#include <functional>
 
 namespace eigen_utils 
 {
@@ -68,7 +69,9 @@ namespace data_utils
 }
 
 namespace bev_utils {
-	// double RootBySecantMethod() // like newtons but uses approx derivative
+	// like newtons but uses approx derivative
+	double RootBySecantMethod(std::function<double(double)> f, double x0, double tol = 1e-12, double initial_step_size = 0.01);
+
 	// double RootByNewtonsMethod() // need derivative of pnl function wrt sigma
 }
 

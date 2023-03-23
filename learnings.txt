@@ -5,3 +5,5 @@ getting to grips with eigen library
 declaring cumsum template function in header, implementation in source file... linking problems. have to define in header file instead
 
 create function to parse csv and map to eigen array
+
+lambda function/captures

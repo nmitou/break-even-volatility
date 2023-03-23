@@ -1,3 +1,4 @@
+/* compile with g++ -I C:\local\eigen-3.4.0 -c utils.cpp */
 #include "utils.h"
 #include <Eigen/Dense>
 #include <string>
@@ -6,9 +7,11 @@
 #include <sstream>
 #include <vector>
 #include <cmath>
+#include <functional>
 // #include <exception>
 
-namespace data_utils {
+namespace data_utils 
+{
 	/* 
 		Function reads CSV from csv_path and outputs an Eigen array of corresponding size.
 		Assumes CSV could have two columns of date, spot prices or just one column of 
@@ -70,5 +73,27 @@ namespace norm_dbn_utils
 	// PDF for normal distribution
 	double NormalProbabilityDensityFunction(double& x, double& mu, double& sigma) {
 		return (1.0 / (sigma * std::sqrt(2 * M_PI))) * std::exp(-0.5 * std::pow((x - mu) / sigma, 2));
+	}
+}
+
+namespace bev_utils 
+{
+	/*
+	Finds the root of the function f via the secant method, which approximates the derivative of f using two points. */
+	double RootBySecantMethod(std::function<double(double)> f, double x0, double tol, double initial_step_size) {
+		double fx0 = f(x0);
+		double x1 = x0 - initial_step_size;
+		double fx1, m, next_x;
+
+		while(std::abs(x1 - x0) > tol) {
+			fx1 = f(x1);
+			m = (fx1 - fx0) / (x1 - x0);
+			next_x = x0 - fx0/m;
+			x0 = x1;
+			fx0 = fx1;
+			x1 = next_x;
+		}
+
+		return x1;
 	}
 }
