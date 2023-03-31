@@ -1,3 +1,5 @@
+// compile with g++ -I C:\local\eigen-3.4.0 -c bev.cpp
+
 #include "bev.h"
 #include "utils.h"
 #include <Eigen/Dense>
@@ -10,11 +12,11 @@ using namespace bev;
 /*
 Construct with filepath to CSV data. */
 BEV::BEV(std::string csv_path) 
-	: path_(data_utils::CSVToEigenArray(csv_path)) {}// path_ = data_utils::CSVToEigenArray(csv_path);}
+	: path_(data_utils::CSVToEigenArray(csv_path)) {} // path_ = data_utils::CSVToEigenArray(csv_path);}
 /*	
-Another constructor. Usage: one can input one-element vectors (for strikes, maturities) which will give 
-a single BEV result, or multiple strikes and a one-element maturity vector for a single skew, or 
-multiple strikes and maturities for a surface. */
+Constructors with more variables set. Usage: one can input one-element vectors (for strikes, maturities) 
+which will give a single BEV result when SolveForBEV is called, or multiple strikes and a one-element maturity vector
+for a single skew, or multiple strikes and maturities for a surface. */
 BEV::BEV(double interest_rate, std::vector<double> strikes, std::vector<int> maturities) 
 	: interest_rate_(interest_rate)
 	, strikes_(strikes)
@@ -33,9 +35,42 @@ BEV::BEV(std::string csv_path, double interest_rate, std::vector<double> strikes
 void BEV::SetData(std::string csv_path) { path_ = data_utils::CSVToEigenArray(csv_path); }
 
 // SOLVING FOR BEV
-
-Eigen::ArrayXXd BEV::SolveForBEV(bool average_pnls) {
+/*
+Call function to solve for break-even volatilities of given path with the set strikes and maturities. 
+The parameter average_pnls is used to set whether the break-even volatility should be found by zeroing 
+the average of the subpath PnLs (when true), or rather (when false) averaging the break-even volatilities 
+of each subpath for a specific maturity, strike combination. */
+Eigen::ArrayXXd BEV::SolveForBEV(bool to_average_pnls) {
 	// if average_pnls = false, then must redo loop to only use 1 path at a time and then average, adds an extra loop
+	// Eigen::Array<double, Eigen::Dynamic, Eigen::Dynamic> BEV_array(maturities_.size(), strikes_.size());
+	// int row = 0; 
+	// int col = 0;
+
+	// for (auto term_in_months : maturities_) {
+
+	// 	Eigen::ArrayXXd paths = GetSubPaths(term_in_months);
+	// 	int days_to_maturity = term_in_months*days_per_month_;
+	// 	Eigen::Array<double, 1, Eigen::Dynamic> times_to_maturity = Eigen::ArrayXd::LinSpaced(days_to_maturity, (double) days_to_maturity-1, 0.0) * dt_;
+
+	// 	for (auto strike : strikes_) {
+
+	// 		auto PnLToZero = [&paths, &strike, &times_to_maturity, this] (double sigma) -> double {
+	// 			return this->ContinuousDHPnL(sigma,
+	// 										paths,
+	// 										strike,
+	// 										times_to_maturity);
+	// 		};
+
+	// 		BEV_array(row, col) = bev_utils::RootBySecantMethod(PnLToZero, 0.99);
+
+	// 		col++;
+	// 	}
+	// 	row++;
+	// 	col = 0;
+	// }
+
+	/////// if average onls = false
+
 	Eigen::Array<double, Eigen::Dynamic, Eigen::Dynamic> BEV_array(maturities_.size(), strikes_.size());
 	int row = 0; 
 	int col = 0;
@@ -48,15 +83,23 @@ Eigen::ArrayXXd BEV::SolveForBEV(bool average_pnls) {
 
 		for (auto strike : strikes_) {
 
-			auto PnLToZero = [&paths, &strike, &times_to_maturity, this] (double sigma) -> double {
-				return this->ContinuousDHPnL(sigma,
-											paths,
-											strike,
-											times_to_maturity);
-			};
-
-			BEV_array(row, col) = bev_utils::RootBySecantMethod(PnLToZero, 0.99);
-
+			if (to_average_pnls) {
+				auto PnLToZero = [&paths, &strike, &times_to_maturity, this] (double sigma) -> double {
+					return this->ContinuousDHPnL(sigma, paths, strike, times_to_maturity);
+				};
+				BEV_array(row, col) = bev_utils::RootBySecantMethod(PnLToZero, 0.99);
+			} else {
+				Eigen::Array<double, Eigen::Dynamic, 1> path_BEVs(paths.rows(), 1);
+				int n = 0;
+				for (auto path : paths.rowwise()) {
+					auto PnLToZero = [&path, &strike, &times_to_maturity, this] (double sigma) -> double {
+						return this->ContinuousDHPnL(sigma, path, strike, times_to_maturity);
+					};
+					path_BEVs(n, 0) = bev_utils::RootBySecantMethod(PnLToZero, 0.99);
+					n++;
+				}
+				BEV_array(row, col) = path_BEVs.mean();
+			}	
 			col++;
 		}
 		row++;
@@ -66,20 +109,27 @@ Eigen::ArrayXXd BEV::SolveForBEV(bool average_pnls) {
 	return BEV_array;
 }
 
-double BEV::ContinuousDHPnL(double sigma, Eigen::ArrayXXd& paths, double& strike, const Eigen::Array<double, 1, Eigen::Dynamic>& times_to_maturity) {
-	
+// Solving for BEV for each given subpath
+Eigen::ArrayXXd BEV::SolveForBEV(double strike, double maturity) {
+
+	Eigen::ArrayXXd paths = GetSubPaths(maturity);
+	int days_to_maturity = maturity*days_per_month_;
+	Eigen::Array<double, 1, Eigen::Dynamic> times_to_maturity = Eigen::ArrayXd::LinSpaced(days_to_maturity, (double) days_to_maturity-1, 0.0) * dt_;
+
+	Eigen::Array<double, Eigen::Dynamic, 1> path_BEVs(paths.rows(), 1);
+	int n = 0;
+	for (auto path : paths.rowwise()) {
+		auto PnLToZero = [&path, &strike, &times_to_maturity, this] (double sigma) -> double {
+			return this->ContinuousDHPnL(sigma, path, strike, times_to_maturity);
+		};
+		path_BEVs(n, 0) = bev_utils::RootBySecantMethod(PnLToZero, 0.99);
+		n++;
+	}
+	return path_BEVs;
+}
+
+double BEV::ContinuousDHPnL(double sigma, const Eigen::ArrayXXd& paths, double& strike, const Eigen::Array<double, 1, Eigen::Dynamic>& times_to_maturity) {
 	int T = paths.cols()-1; 
-
-	// necessary to have gamma function? !!!
-
-	// Eigen::ArrayXXd S2_ti = paths(Eigen::all, Eigen::seq(0, T-1)).pow(2);
-
-	// Eigen::ArrayXXd Gamma_ti  = BlackScholesGamma(sigma, paths(Eigen::all, Eigen::seq(0, T-1)), strike, times_to_maturity(Eigen::seq(0, T-1)));
-
-	// Eigen::ArrayXXd Squared_returns = ((paths(Eigen::all, Eigen::seq(1, T)) - paths(Eigen::all, Eigen::seq(0, T-1))) / paths(Eigen::all, Eigen::seq(0, T-1))).pow(2);
-
-	// double PnL = ((Gamma_ti*S2_ti*(sigma*sigma*dt_ - Squared_returns)).rowwise()*((interest_rate_*times_to_maturity(Eigen::seq(0, T-1))).exp())).rowwise().sum().mean();
-
 	return ((BlackScholesGamma(sigma, paths(Eigen::all, Eigen::seq(0, T-1)), strike, times_to_maturity(Eigen::seq(0, T-1))) * 												// Gamma_ti
 			paths(Eigen::all, Eigen::seq(0, T-1)).pow(2) *																													// S2_ti
 			(sigma*sigma*dt_ - ((paths(Eigen::all, Eigen::seq(1, T)) - paths(Eigen::all, Eigen::seq(0, T-1))) / paths(Eigen::all, Eigen::seq(0, T-1))).pow(2))).rowwise() * // sigma^2 * dt - (dS_ti / S_ti)^2
@@ -100,5 +150,8 @@ parameter entered. */
 Eigen::ArrayXXd BEV::GetSubPaths(int term_in_months) {
 	int days_to_maturity = term_in_months*days_per_month_;
 	int n_sub_paths = path_.size() / (days_to_maturity); // integer division => removes remaining datapoints which are less than a full sub path
-	return path_(Eigen::seq(0, n_sub_paths*days_to_maturity - 1), Eigen::all).reshaped<Eigen::RowMajor>(n_sub_paths, days_to_maturity);
+	// reshape array where each row holds a subpath
+	Eigen::ArrayXXd sub_paths = path_(Eigen::seq(0, n_sub_paths*days_to_maturity - 1), Eigen::all).reshaped<Eigen::RowMajor>(n_sub_paths, days_to_maturity);
+	// rebase subpaths by dividing each by starting value
+	return sub_paths.colwise() / sub_paths(Eigen::all, 0);
 }

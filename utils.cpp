@@ -80,12 +80,14 @@ namespace bev_utils
 {
 	/*
 	Finds the root of the function f via the secant method, which approximates the derivative of f using two points. */
-	double RootBySecantMethod(std::function<double(double)> f, double x0, double tol, double initial_step_size) {
+	double RootBySecantMethod(std::function<double(double)> f, double x0, double initial_step_size, double xtol, double ftol) {
 		double fx0 = f(x0);
 		double x1 = x0 - initial_step_size;
-		double fx1, m, next_x;
+		double fx1 = f(x1);
+		double m, next_x;
 
-		while(std::abs(x1 - x0) > tol) {
+		// two stopping conditions, one for x convergence and then another condition where x-axis is near parallel to f (f asymptotically approaches zero as x->0)
+		while((std::abs(x1 - x0) > xtol) && (std::abs(fx1) > ftol)) { 
 			fx1 = f(x1);
 			m = (fx1 - fx0) / (x1 - x0);
 			next_x = x0 - fx0/m;
