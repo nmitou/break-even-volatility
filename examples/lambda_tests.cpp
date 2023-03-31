@@ -2,7 +2,7 @@
 
 #include <iostream>
 #include <functional>
-#include "utils.h"
+#include "../utils.h"
 
 auto invoke_func(double x, std::function<double(double)> func) {
 	return func(x);
