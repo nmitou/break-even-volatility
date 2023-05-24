@@ -2,13 +2,13 @@
 #include "utils.h"
 #include <Eigen/Dense>
 #include <string>
+#include <cstring>
 #include <iostream>
 #include <fstream>
 #include <sstream>
 #include <vector>
 #include <cmath>
 #include <functional>
-// #include <exception>
 
 namespace data_utils 
 {
@@ -71,8 +71,8 @@ namespace data_utils
 namespace norm_dbn_utils
 {
 	// PDF for normal distribution
-	double NormalProbabilityDensityFunction(double& x, double& mu, double& sigma) {
-		return (1.0 / (sigma * std::sqrt(2 * M_PI))) * std::exp(-0.5 * std::pow((x - mu) / sigma, 2));
+	double NormalProbabilityDensityFunction(double x, double mu, double sigma) {
+		return (1.0 / (sigma * std::sqrt(2 * math_constants::pi))) * std::exp(-0.5 * std::pow((x - mu) / sigma, 2));
 	}
 }
 
