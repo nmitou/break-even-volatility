@@ -7,3 +7,9 @@ declaring cumsum template function in header, implementation in source file... l
 create function to parse csv and map to eigen array
 
 lambda function/captures
+
+cmake
+- for usage with mingw, add this flag when building with cmake (first time): -G "MinGW Makefiles"
+- use mingw32-make
+
+
