@@ -5,5 +5,5 @@ add_subdirectory(utils)
 target_link_libraries(BevClass PRIVATE Utils)
 
 target_include_directories(BevClass 
-							PUBLIC "C:/local/eigen-3.4.0"
+							PUBLIC ${PATH_TO_EIGEN_LIB}
 							PRIVATE "./utils")
