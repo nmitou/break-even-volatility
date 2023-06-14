@@ -114,7 +114,7 @@ a row vector representing a single path can be entered for a single BEV estimate
 double BEV::ContinuousDHPnL(double sigma, const Eigen::ArrayXXd& paths, double strike, const Eigen::Array<double, 1, Eigen::Dynamic>& times_to_maturity) {
 	int T = paths.cols()-1; 
 	return ((BlackScholesGamma(sigma, paths(Eigen::all, Eigen::seq(0, T-1)), strike, times_to_maturity(Eigen::seq(0, T-1))) * 												// Gamma_ti
-			paths(Eigen::all, Eigen::seq(0, T-1)).pow(2) *																													// S2_ti
+			paths(Eigen::all, Eigen::seq(0, T-1)).pow(2) *																													// S^2_ti
 			(sigma*sigma*dt_ - ((paths(Eigen::all, Eigen::seq(1, T)) - paths(Eigen::all, Eigen::seq(0, T-1))) / paths(Eigen::all, Eigen::seq(0, T-1))).pow(2))).rowwise() * // sigma^2 * dt - (dS_ti / S_ti)^2
 			((interest_rate_ * times_to_maturity(Eigen::seq(0, T-1))).exp())).rowwise().sum().mean(); 																		// e^(r*(T-ti)) ... sum rows, average pnls from each path
 }
