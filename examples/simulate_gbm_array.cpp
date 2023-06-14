@@ -36,7 +36,7 @@ int main() {
 	// Array S of stock paths where each row represents a stock price path with N+1 data points (including S_0)
 	ArrayXXd S(n_stocks, N+1);
 	// Set first column to be initial price
-	S(all, 0) = Eigen::MatrixXd::Constant(5,1, S_0);
+	S(all, 0) = Eigen::MatrixXd::Constant(N, 1, S_0);
 	// Set remaining points for all paths
 	S(all, seq(1, N)) = S_0*(Z.exp());
 
