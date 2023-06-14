@@ -61,7 +61,11 @@ void BEV::SetData(std::string csv_path) {
 	path_ = data_utils::CSVToEigenArray(csv_path);
 	DataValid();
 }
-void SetMaturities(std::vector<int> maturities) {
+void BEV::SetData(Eigen::ArrayXXd path) { 
+	path_ = path;
+	DataValid();
+}
+void BEV::SetMaturities(std::vector<int> maturities) {
 	maturities_ = maturities; 
 	DataValid(); 
 }

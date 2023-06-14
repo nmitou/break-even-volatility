@@ -23,15 +23,17 @@ namespace bev {
 		BEV(std::string csv_path); 
 		BEV(Eigen::ArrayXXd path);
 		/*	
-		Constructor which sets all of the instance variables above. Usage: one can input one-element vectors (for strikes, maturities) 
+		Constructors which sets all of the instance variables above. Usage: one can input one-element vectors (for strikes, maturities) 
 		which will give a single BEV result when SolveForBEV is called, or multiple strikes and a one-element maturity vector
 		for a single skew, or multiple strikes and maturities for a surface. Note: the maturities vector is a vector of contract 
 		terms/times to maturity in months, with a month assumed to hold 21 trading days.*/
 		BEV(std::string csv_path, double interest_rate, std::vector<double> strikes, std::vector<int> maturities);
+		BEV(Eigen::ArrayXXd path, double interest_rate, std::vector<double> strikes, std::vector<int> maturities);
 
 		// Setters, if not set with a constructor:
 		void SetData(std::string csv_path);
-		void SetMaturities(std::vector<int> maturities);
+		void SetData(Eigen::ArrayXXd path);
+		void SetMaturities(std::vector<int> maturities); 
 		void SetInterestRate(double interest_rate) { interest_rate_ = interest_rate; };
 		void SetStrikes(std::vector<double> strikes) { strikes_ = strikes; };
 
