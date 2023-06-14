@@ -9,31 +9,62 @@
 
 using namespace bev;
 
+// Function which tests whether data inputted is valid. The Eigen array must be a column vector with enough/adequate points
+// corresponding to the terms/maturities entered. 
+void BEV::DataValid() {
+	assert(path_.cols() == 1);
+	if (maturities_.size() > 0) { // check if maturities_ has been initialised
+		for (int m : maturities_)
+			assert(path_.rows() >= m*21); // otherwise not enough data for maturity which fails this test
+	}
+}
+
 // CONSTRUCTORS
 /*
 Construct with filepath to CSV data. */
 BEV::BEV(std::string csv_path) 
-	: path_(data_utils::CSVToEigenArray(csv_path)) {} // path_ = data_utils::CSVToEigenArray(csv_path);}
+	: path_(data_utils::CSVToEigenArray(csv_path)) 
+{
+	DataValid();
+}
+/*
+Construct with Eigen array. */
+BEV::BEV(Eigen::ArrayXXd path)
+	: path_(path)
+{
+	DataValid();
+}
 /*	
-Constructors with more variables set. Usage: one can input one-element vectors (for strikes, maturities) 
+Constructor with all private variables set. Usage: one can input one-element vectors (for strikes, maturities) 
 which will give a single BEV result when SolveForBEV is called, or multiple strikes and a one-element maturity vector
 for a single skew, or multiple strikes and maturities for a surface. */
-BEV::BEV(double interest_rate, std::vector<double> strikes, std::vector<int> maturities) 
-	: interest_rate_(interest_rate)
-	, strikes_(strikes)
-	, maturities_(maturities)
-	{}
-/*
-Constructor with all private variables set. See comment above. */
 BEV::BEV(std::string csv_path, double interest_rate, std::vector<double> strikes, std::vector<int> maturities)
 	: path_(data_utils::CSVToEigenArray(csv_path))
 	, interest_rate_(interest_rate)
 	, strikes_(strikes)
 	, maturities_(maturities)
-	{}
+{
+	DataValid();
+}
+// Same constructor except with Eigen array instead of filepath to csv
+BEV::BEV(Eigen::ArrayXXd path, double interest_rate, std::vector<double> strikes, std::vector<int> maturities)
+	: path_(path)
+	, interest_rate_(interest_rate)
+	, strikes_(strikes)
+	, maturities_(maturities)
+{
+	DataValid();
+}
 
 // SETTERS
-void BEV::SetData(std::string csv_path) { path_ = data_utils::CSVToEigenArray(csv_path); }
+void BEV::SetData(std::string csv_path) { 
+	path_ = data_utils::CSVToEigenArray(csv_path);
+	DataValid();
+}
+void SetMaturities(std::vector<int> maturities) {
+	maturities_ = maturities; 
+	DataValid(); 
+}
 
 // SOLVING FOR BEV
 /*

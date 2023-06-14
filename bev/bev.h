@@ -13,26 +13,27 @@ namespace bev {
 		std::vector<int> maturities_; // vector of maturities (in months) for which to find BEV outputs, each month is assumed to hold 21 trading days
 		double dt_ = 1.0 / 252.0;
 		int days_per_month_ = 21;
+		// Checks that data inputted is valid with assertions. The Eigen array must be a column vector with adequate points corresponding to the maturities entered.
+		void DataValid();
 
 	public:
 		// Default constructor
 		BEV() {}; 
-		// Constructor with filepath as string that creates path_ from the CSV data
+		// Constructors with filepath as string that creates path_ from the CSV data or one which directly sets an eigen array to path_
 		BEV(std::string csv_path); 
+		BEV(Eigen::ArrayXXd path);
 		/*	
-		Constructors which set more of the instance variables above. Usage: one can input one-element vectors (for strikes, maturities) 
+		Constructor which sets all of the instance variables above. Usage: one can input one-element vectors (for strikes, maturities) 
 		which will give a single BEV result when SolveForBEV is called, or multiple strikes and a one-element maturity vector
 		for a single skew, or multiple strikes and maturities for a surface. Note: the maturities vector is a vector of contract 
 		terms/times to maturity in months, with a month assumed to hold 21 trading days.*/
-		BEV(double interest_rate, std::vector<double> strikes, std::vector<int> maturities);
-		// Constructor with all private variables set. See comment above.
 		BEV(std::string csv_path, double interest_rate, std::vector<double> strikes, std::vector<int> maturities);
 
 		// Setters, if not set with a constructor:
 		void SetData(std::string csv_path);
+		void SetMaturities(std::vector<int> maturities);
 		void SetInterestRate(double interest_rate) { interest_rate_ = interest_rate; };
 		void SetStrikes(std::vector<double> strikes) { strikes_ = strikes; };
-		void SetMaturities(std::vector<int> maturities) { maturities_ = maturities; };
 
 		// Getters:
 		Eigen::ArrayXXd GetPath() { return path_; };
