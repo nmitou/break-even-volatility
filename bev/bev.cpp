@@ -21,9 +21,10 @@ void BEV::DataValid() {
 
 // CONSTRUCTORS
 /*
-Construct with filepath to CSV data. */
-BEV::BEV(std::string csv_path) 
-	: path_(data_utils::CSVToEigenArray(csv_path)) 
+Construct with filepath to CSV data.
+Passes other necessary parameters to CSV parser, i.e. header, column name, column number. */
+BEV::BEV(std::string csv_path, int col_no, bool header, std::string col_name) 
+	: path_(data_utils::CSVToEigenArray(csv_path, col_no, header, col_name)) 
 {
 	DataValid();
 }
@@ -37,9 +38,10 @@ BEV::BEV(Eigen::ArrayXXd path)
 /*	
 Constructor with all private variables set. Usage: one can input one-element vectors (for strikes, maturities) 
 which will give a single BEV result when SolveForBEV is called, or multiple strikes and a one-element maturity vector
-for a single skew, or multiple strikes and maturities for a surface. */
-BEV::BEV(std::string csv_path, double interest_rate, std::vector<double> strikes, std::vector<int> maturities)
-	: path_(data_utils::CSVToEigenArray(csv_path))
+for a single skew, or multiple strikes and maturities for a surface. 
+As above, header, col_name and col_no relate to the CSV data and which column is desired. */
+BEV::BEV(std::string csv_path, double interest_rate, std::vector<double> strikes, std::vector<int> maturities, int col_no, bool header, std::string col_name)
+	: path_(data_utils::CSVToEigenArray(csv_path, col_no, header, col_name))
 	, interest_rate_(interest_rate)
 	, strikes_(strikes)
 	, maturities_(maturities)
@@ -57,8 +59,8 @@ BEV::BEV(Eigen::ArrayXXd path, double interest_rate, std::vector<double> strikes
 }
 
 // SETTERS
-void BEV::SetData(std::string csv_path) { 
-	path_ = data_utils::CSVToEigenArray(csv_path);
+void BEV::SetData(std::string csv_path, int col_no, bool header, std::string col_name) { 
+	path_ = data_utils::CSVToEigenArray(csv_path, col_no, header, col_name);
 	DataValid();
 }
 void BEV::SetData(Eigen::ArrayXXd path) { 

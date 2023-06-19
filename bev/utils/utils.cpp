@@ -13,11 +13,11 @@
 namespace data_utils 
 {
 	/* 
-		Function reads CSV from csv_path and outputs an Eigen array of corresponding size.
-		Assumes CSV could have two columns of date, spot prices or just one column of 
-		spot prices. Handles both cases and extracts dates from former case for potential
-		future use. */
-	Eigen::ArrayXXd CSVToEigenArray(std::string csv_path) {
+		Function reads specified column from the CSV in csv_path and outputs an Eigen array (column vector) of corresponding size.
+		If header is true, function searches for specific column name, otherwise it uses the specified column
+		number. */
+	Eigen::ArrayXXd CSVToEigenArray(std::string csv_path, int col_no, bool header, std::string col_name) {
+		// Open stream
 		std::ifstream csv(csv_path);
 		if(!csv) {
 			std::cerr << "File could not be opened." << std::endl;
@@ -25,46 +25,42 @@ namespace data_utils
 			csv.close();
 			std::terminate(); // as yet, unsure if this is really bad. use < throw; > ?
 		}
-
-		std::vector<std::string> dates;
-		std::vector<double> spots;
-
-		// get first line to check if there's a comma
-		std::string line;
-		std::getline(csv, line);
-		unsigned int nRows = 1;
-		
-		int commaPos = line.find(",");
-		
-		if(commaPos != std::string::npos) { // then csv has dates and spot prices columns
-			// extract the first line
+		// if header exists then make sure a column name was inputted, else need a column number
+		if (header) {
+			assert(col_name != "undefined" && "Insert column name");
+			// get first line 
+			std::string line;
+			std::getline(csv, line);
 			std::stringstream lineStream(line);
+			// find column count of desired column
 			std::string cell;
 			std::getline(lineStream, cell, ',');
-			dates.push_back(cell);
-			std::getline(lineStream, cell);
-			spots.push_back(std::stod(cell));
-			// do the rest of the lines
-			while(std::getline(csv, line)) {
-				std::stringstream lineStream(line);
+			int count = 0;
+			while (cell != col_name) {
 				std::getline(lineStream, cell, ',');
-				dates.push_back(cell);
-				std::getline(lineStream, cell);
-				spots.push_back(std::stod(cell));
-				nRows++;
+				count++;
 			}
-		} else { // then csv only has spot price column
-			// again, extract the first line
-			spots.push_back(std::stod(line));
-			// do the remaining lines
-			while(std::getline(csv, line)) {
-				spots.push_back(std::stod(line));
-				nRows++;
-			}
-		}
+			col_no = count;
+		} else
+			assert(col_no != -1 && "Choose column number, zero indexed");
 
+		std::vector<double> values;
+		int nRows = 0;
+		std::string line;
+		// Populate values vector with value from correct column
+		while (std::getline(csv, line)) {
+			std::stringstream lineStream(line);
+			std::string cell;
+			int j = 0;
+			while (j <= col_no) {
+				std::getline(lineStream, cell, ',');
+				j++;
+			}
+			values.push_back(std::stod(cell));
+			nRows++;
+		}
 		csv.close();
-		return Eigen::Map<Eigen::ArrayXXd>(spots.data(), nRows, 1);
+		return Eigen::Map<Eigen::ArrayXXd>(values.data(), nRows, 1);
 	}
 }
 

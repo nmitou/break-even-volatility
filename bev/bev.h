@@ -19,19 +19,22 @@ namespace bev {
 	public:
 		// Default constructor
 		BEV() {}; 
-		// Constructors with filepath as string that creates path_ from the CSV data or one which directly sets an eigen array to path_
-		BEV(std::string csv_path); 
+		// Constructors with filepath as string that creates path_ from the CSV data or one which directly sets an eigen array (column vector) to path_.
+		// USAGE:	If CSV is chosen, one must either set header to true and then set the desired column name. Otherwise, leave the former two parameters as default
+		// 			and set the column number.
+		BEV(std::string csv_path, int col_no = -1, bool header = false, std::string col_name = "undefined"); 
 		BEV(Eigen::ArrayXXd path);
 		/*	
 		Constructors which sets all of the instance variables above. Usage: one can input one-element vectors (for strikes, maturities) 
 		which will give a single BEV result when SolveForBEV is called, or multiple strikes and a one-element maturity vector
 		for a single skew, or multiple strikes and maturities for a surface. Note: the maturities vector is a vector of contract 
-		terms/times to maturity in months, with a month assumed to hold 21 trading days.*/
-		BEV(std::string csv_path, double interest_rate, std::vector<double> strikes, std::vector<int> maturities);
+		terms/times to maturity in months, with a month assumed to hold 21 trading days.
+		See USAGE above for setting parameters related to CSV data (header, col_name, col_no). */
+		BEV(std::string csv_path, double interest_rate, std::vector<double> strikes, std::vector<int> maturities, int col_no = -1, bool header = false, std::string col_name = "undefined");
 		BEV(Eigen::ArrayXXd path, double interest_rate, std::vector<double> strikes, std::vector<int> maturities);
 
 		// Setters, if not set with a constructor:
-		void SetData(std::string csv_path);
+		void SetData(std::string csv_path, int col_no = -1, bool header = false, std::string col_name = "undefined"); // see USAGE above for setting parameters
 		void SetData(Eigen::ArrayXXd path);
 		void SetMaturities(std::vector<int> maturities); 
 		void SetInterestRate(double interest_rate) { interest_rate_ = interest_rate; };

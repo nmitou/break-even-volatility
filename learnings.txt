@@ -19,6 +19,8 @@ to do:
 	- create readme
 		> note on downloading eigen, only need to fill eigen path in top level cmakelists.txt
 		> otherwise one can put all files and headers (bev.cpp, bev.h, utils.cpp, ...) into same folder (so that no include directives need to be changed in any source or implementation files) and can compile on the command line. Easiest way is to compile bev and utils into object file (remembering to include eigen path), then using this to compile a main.cpp  - while also imcluding eigen
-	- assert data inputted has enough points for calculation of each bev wrt tenors --- yet to add to other solve for bev function
+	- assert data inputted has enough points for calculation of each bev wrt tenors --- yet to add to other solve for bev function where one can input new maturity
 		> add messages to assert
+		> message for assert in utils too
+		> say data mjust be in cronological order (oldest at top/beginning)
 	- add gbm simulation function into utils

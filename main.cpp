@@ -1,4 +1,5 @@
 /*
+
 compile with g++ -I C:\local\eigen-3.4.0 -o bev_class_testing utils.o bev.o bev_class_testing.cpp 
 */
 #include <iostream>
@@ -10,7 +11,7 @@ int main() {
 	double r = 0.065;
 	std::vector<double> strikes = {0.80, 0.85, 0.90, 0.95, 1.00, 1.05, 1.10, 1.15, 1.20};
 	std::vector<int> maturities = {1, 2, 3, 4, 5, 6, 9, 12, 15, 18};
-	bev::BEV bev_obj("C:/Users/Nicolas/Documents/Courses and code/Projects/break-even-volatility/sampledata.csv", r, strikes, maturities);
+	bev::BEV bev_obj("sampledata.csv", r, strikes, maturities, 0);
 
 	Eigen::ArrayXXd bev_output = bev_obj.SolveForBEV();
 

@@ -57,11 +57,13 @@ namespace data_utils
 {
 	/*
 	Function for reading in data
+
+	Reads in a specific column from the CSV specified in csv_path and outputs an Eigen array (column vector) of corresponding size.
+	USAGE:	Set header to true and input the desired column name in the CSV, can leave col_no as default.
+			Otherwise, if header is set to false then input the desired column number, leaving col_name as default.
 	*/
 
-	// Function parses CSV to Eigen array, capabable of handling a single column of price data,
-	// or two columns of (date, price).
-	Eigen::ArrayXXd CSVToEigenArray(std::string csv_path);
+	Eigen::ArrayXXd CSVToEigenArray(std::string csv_path, int col_no = -1, bool header = false, std::string col_name = "undefined");
 }
 
 namespace norm_dbn_utils
