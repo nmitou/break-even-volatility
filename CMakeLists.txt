@@ -7,7 +7,10 @@ project(BREAK-EVEN-VOLATILITY)
 
 add_executable(${PROJECT_NAME} main.cpp)
 
+set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
+
 add_subdirectory(bev)
+add_subdirectory(examples)
 
 target_link_libraries(${PROJECT_NAME} PRIVATE BevClass)
 

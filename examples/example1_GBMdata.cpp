@@ -4,11 +4,12 @@
 	to result in a flat volatility surface (due to the constant volatility assumption).
 
 	Compile with:
-		g++ -I path/to/eigen path/to/utils path/to/bev -o example1_GBMdata example1_GBMdata.cpp bev.cpp utils.cpp
+		g++ -I path/to/eigen -I path/to/bev -I path/to/utils -o example1_GBMdata example1_GBMdata.cpp bev.cpp utils.cpp
 	or with cmake.
 */
 
 #include <iostream>
+#include <iomanip>
 #include <random>
 #include <Eigen/Dense>
 #include <cmath>
@@ -38,14 +39,35 @@ int main() {
 	// i.e. each row is a volatility skew
 	Eigen::ArrayXXd volSurface = bevSimulated.SolveForBEV();
 	// We would expect the surface to be flat and approach the simulated volatility as we increase the data size
-	std::cout << "BEV estimates based on " << T << " years of data:\n" << volSurface << std::endl;
+	std::cout << "BEV estimates based on " << T << " years of data:" << std::endl << std::endl;
+	std::cout << volSurface << std::endl << std::endl;
+
+	int c_width = 15;
+
+	std::cout << std::left << std::setw(c_width) << "\t\tStrikes" << '\n';
+	std::cout << std::setw(c_width) << "\t\t";
+	for (double k : strikes)
+		std::cout << std::setw(c_width) << k;
+	std::cout << std::endl;
+	std::cout << std::setw(c_width) << "Terms";
+	for (int i = 0; i < maturities.size(); i++) {
+		if (i > 0)
+			std::cout << '\t';
+		std::cout << std::setw(c_width) << maturities[i];
+		for (auto v : volSurface.row(i)) std::cout << std::setw(c_width) << v;
+		std::cout << std::endl;
+	}
+
+	std::cout << std::endl;
+
 	// Let's generate a much longer sample path and see the results
 	T = 100;
 	S = Eigen::ArrayXXd ((T * 252) + 1, 1);
 	GenerateGBMData(S, 100, 0.07, 0.2, T);
 	bevSimulated.SetData(S);
 	volSurface = bevSimulated.SolveForBEV();
-	std::cout << "BEV estimates based on " << T << " years of data:\n" << volSurface << std::endl;
+	std::cout << "BEV estimates based on " << T << " years of data:" << std::endl << std::endl;
+	std::cout << volSurface << std::endl << std::endl;
 
 	return 0;
 }
