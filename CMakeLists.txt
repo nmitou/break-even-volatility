@@ -5,7 +5,7 @@ set(PATH_TO_EIGEN_LIB "C:/local/eigen-3.4.0")
 
 project(BREAK-EVEN-VOLATILITY)
 
-add_executable(main main.cpp)
+add_executable(${PROJECT_NAME} main.cpp)
 
 set_target_properties(${PROJECT_NAME} PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR})
 
