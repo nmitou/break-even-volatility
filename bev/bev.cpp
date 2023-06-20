@@ -15,7 +15,7 @@ void BEV::DataValid() {
 	assert(path_.cols() == 1);
 	if (maturities_.size() > 0) { // check if maturities_ has been initialised
 		for (int m : maturities_)
-			assert(path_.rows() >= m*21); // otherwise not enough data for maturity which fails this test
+			assert(path_.size() >= m*21); // otherwise not enough data for maturity which fails this test
 	}
 }
 
@@ -69,7 +69,8 @@ void BEV::SetData(Eigen::ArrayXXd path) {
 }
 void BEV::SetMaturities(std::vector<int> maturities) {
 	maturities_ = maturities; 
-	DataValid(); 
+	if (path_.size() > 0) // check if path has been initialised
+		DataValid(); 
 }
 
 // SOLVING FOR BEV
@@ -127,6 +128,8 @@ This function performs the same procedure as above, except for a specific strike
 an array of break-even volatilities for each subpath. This corresponds to the case above when average_pnls==false, prior 
 to averaging the subpaths' BEV estimates for the final result (for that specific strike, maturity combination).*/
 Eigen::ArrayXXd BEV::SolveForBEV(double strike, double maturity) {
+	// Check there'e enough data for this maturity
+	assert(path_.size() >= maturity*21);
 
 	Eigen::ArrayXXd paths = GetSubPaths(maturity);
 	int days_to_maturity = maturity*days_per_month_;
