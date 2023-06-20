@@ -7,6 +7,7 @@
 #include <functional>
 #include <cmath>
 #include <cassert>
+#include <vector>
 
 namespace math_constants 
 {
@@ -81,12 +82,14 @@ namespace bev_utils {
 	/*
 	Utility functions for the break-even volatility methodology and the optimisation processes it requires.
 	*/
-
 	// double RootByNewtonsMethod() // need derivative of pnl function wrt sigma
 
 	// Function returns the root of the inputted function f (usage with lambda function) via the secant method,
 	// like Newton's method but uses approx. derivative.
 	// Parameters: x0 = starting point, initial_step_size to calculate first secant, xtol/ftol for convergence/stopping criteria
 	double RootBySecantMethod(std::function<double(double)> f, double x0, double initial_step_size = 0.01, double xtol = 1e-12, double ftol = 1e-12);
+
+	/*	Function to print volatility surface to std::cout. */
+	void PrintResults(std::vector<double> strikes, std::vector<int> maturities, Eigen::ArrayXXd volatilities, int decimal_precision = 4);
 }
 #endif

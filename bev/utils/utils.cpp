@@ -9,6 +9,7 @@
 #include <vector>
 #include <cmath>
 #include <functional>
+#include <iomanip>
 
 namespace data_utils 
 {
@@ -93,5 +94,35 @@ namespace bev_utils
 		}
 
 		return x1;
+	}
+
+	/*	Function to print volatility surface to std::cout. */
+	void PrintResults(std::vector<double> strikes, std::vector<int> maturities, Eigen::ArrayXXd volatilities, int decimal_precision) {
+		int c_width = decimal_precision + 4;
+		int c1 = 8, c2 = 3, c3 = 2;
+		std::cout << std::setprecision(decimal_precision);
+		std::cout << std::left;
+
+		// Row 1
+		std::cout << std::setw(c1) << " " << std::setw(c2) << " " << std::setw(c3) << " " << std::setw(c_width) << "Strikes (%)" << '\n';
+		// Row 2
+		std::cout << std::setw(c1) << " " << std::setw(c2) << " " << std::setw(c3) << " " ;
+		for (double k : strikes)
+			std::cout << std::setw(c_width) << k*100;
+		std::cout << std::endl;
+		// Row 3
+		std::cout << std::setw(c1) << " " << std::setw(c2) << " " << std::setw(c3) << " " ;
+		for (int n = 0; n < (strikes.size() - 1)*c_width + (decimal_precision+2); n++)
+			std::cout << "-";
+		std::cout << std::endl;
+		// Rest of table
+		std::cout << std::setw(c1) << "Terms";
+		for (int i = 0; i < maturities.size(); i++) {
+			if (i > 0)
+				std::cout << std::setw(c1) << " ";
+			std::cout << std::setw(c2) << maturities[i] << std::setw(c3) << "|";
+			for (auto v : volatilities.row(i)) std::cout << std::setw(c_width) << v;
+			std::cout << std::endl;
+		}
 	}
 }
