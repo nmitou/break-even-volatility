@@ -10,5 +10,5 @@ target_link_libraries(${EX1}
 
 target_include_directories(${EX1} 
 							PUBLIC ${PATH_TO_EIGEN_LIB}
-							PRIVATE "../bev"
-							PRIVATE "../bev/utils")
+							PRIVATE "${PROJECT_SOURCE_DIR}/bev"
+							PRIVATE "${PROJECT_SOURCE_DIR}/bev/utils")
