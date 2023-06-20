@@ -64,8 +64,11 @@ namespace data_utils
 	USAGE:	Set header to true and input the desired column name in the CSV, can leave col_no as default.
 			Otherwise, if header is set to false then input the desired column number, leaving col_name as default.
 	*/
-
 	Eigen::ArrayXXd CSVToEigenArray(std::string csv_path, int col_no = -1, bool header = false, std::string col_name = "undefined");
+
+	/*	Function to generate a GBM sample path with given parameters.
+		Fills in the column vector/(N+1)x1 array S (correct size initialisation not required). */
+	void GenerateGBMData(Eigen::ArrayXXd& S, double S_0, double mu, double sigma, int T_years, int seed);
 }
 
 namespace norm_dbn_utils

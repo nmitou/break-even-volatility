@@ -10,6 +10,7 @@
 #include <cmath>
 #include <functional>
 #include <iomanip>
+#include <random>
 
 namespace data_utils 
 {
@@ -62,6 +63,23 @@ namespace data_utils
 		}
 		csv.close();
 		return Eigen::Map<Eigen::ArrayXXd>(values.data(), nRows, 1);
+	}
+
+	/*	Function to generate a GBM sample path with given parameters.
+		Fills the column vector/(N+1)x1 array. */
+	void GenerateGBMData(Eigen::ArrayXXd& S, double S_0, double mu, double sigma, int T_years, int seed) {
+		// If S not initialised with correct number of data points
+		if ((S.rows() != (T_years * 252) + 1) || S.cols() != 1)
+			S = Eigen::ArrayXXd ((T_years * 252) + 1, 1);
+		// First, we set up the generator to sample from the normal distribution
+		std::mt19937 generator{seed};
+		std::normal_distribution<double> dnorm(0, 1);
+
+		int N = 21*12*T_years; // number of days, assuming 21 business days per month
+		double dt = 1.0 / (21.0 * 12.0); // or (double) T/N;
+		S(0,0) = 100;
+		for (int i = 1; i < N+1; i++)
+			S(i, 0) = S(i-1, 0) * std::exp((mu - 0.5 * std::pow(sigma, 2)) * dt + sigma * std::sqrt(dt) * dnorm(generator));
 	}
 }
 

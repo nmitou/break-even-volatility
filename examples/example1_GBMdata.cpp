@@ -4,33 +4,26 @@
 	to result in a flat volatility surface (due to the constant volatility assumption).
 
 	Compile with:
-		g++ -I path/to/eigen -I path/to/bev -I path/to/utils -o example1_GBMdata example1_GBMdata.cpp bev.cpp utils.cpp
+		g++ -I path/to/eigen -I path/to/bev -I path/to/utils -o example1 example1_GBMdata.cpp bev.cpp utils.cpp
 	or with cmake.
 */
 
 #include <iostream>
-#include <random>
 #include <Eigen/Dense>
-#include <cmath>
 #include <vector>
 #include "bev.h"
 #include "utils.h"
 
-using std::sqrt;
-using std::pow;
-using std::exp;
-
 using bev_utils::PrintResults;
-
-void GenerateGBMData(Eigen::ArrayXXd& S, double S_0, double mu, double sigma, int T_years, int seed = 12345);
+using data_utils::GenerateGBMData;
 
 int main() {
 	// Let's generate some GBM data
 	int T = 5; // number of years => *252 points per year assuming 21 business days per month
-	Eigen::ArrayXXd S((T * 252) + 1, 1); // initialize array with correct number of points
+	Eigen::ArrayXXd S;
 	// Simulate data with function, can reset seed in declaration above
 	double sigma = 0.2;
-	GenerateGBMData(S, 100, 0.07, sigma, T);
+	GenerateGBMData(S, 100, 0.07, sigma, T, 12345);
 
 	std::cout << "\nBreak-even volatility computations using simulated GBM data with volatility = " << sigma << std::endl << std::endl;
 
@@ -51,8 +44,7 @@ int main() {
 
 	// Let's generate a much longer sample path and see the results
 	T = 100; // as an even greater sanity check, make this 1000 - surface flattens out
-	S = Eigen::ArrayXXd ((T * 252) + 1, 1);
-	GenerateGBMData(S, 100, 0.07, 0.2, T);
+	GenerateGBMData(S, 100, 0.07, 0.2, T, 12345);
 	bevSimulated.SetData(S);
 	volSurface = bevSimulated.SolveForBEV();
 	std::cout << "BEV estimates based on " << T << " years of data:" << std::endl << std::endl;
@@ -61,18 +53,3 @@ int main() {
 
 	return 0;
 }
-
-/*	Function to generate a GBM sample path with given parameters.
-	Fills the column vector/1x(N+1) array. */
-void GenerateGBMData(Eigen::ArrayXXd& S, double S_0, double mu, double sigma, int T_years, int seed) {
-	// First, we set up the generator to sample from the normal distribution
-	std::mt19937 generator{seed};
-	std::normal_distribution<double> dnorm(0, 1);
-
-	int N = 21*12*T_years; // number of days, assuming 21 business days per month
-	double dt = 1.0 / (21.0 * 12.0); // or (double) T/N;
-	S(0,0) = 100;
-	for (int i = 1; i < N+1; i++)
-		S(i, 0) = S(i-1, 0) * exp((mu - 0.5 * pow(sigma, 2)) * dt + sigma * sqrt(dt) * dnorm(generator));
-}
-
