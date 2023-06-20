@@ -1,4 +1,3 @@
-/* compile with g++ -I C:\local\eigen-3.4.0 -c utils.cpp */
 #include "utils.h"
 #include <Eigen/Dense>
 #include <string>

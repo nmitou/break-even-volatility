@@ -2,10 +2,11 @@
 	The first example uses simulated data from a Geometric Brownian Motion process (GBM), i.e. a price process in a Black-Scholes world.
 	Naturally, with "enough" data (hence, we'll provide a large amount of simulated data), we expect the break-even volatility computation
 	to result in a flat volatility surface (due to the constant volatility assumption).
-
-	Compile with:
+	
+	Compilation: Must include paths to Eigen library, bev and utils. Must link bev.cpp and utils.cpp as well (or their respective object files).
+	Compile with (for example, if using GCC):
 		g++ -I path/to/eigen -I path/to/bev -I path/to/utils -o example1 example1_GBMdata.cpp bev.cpp utils.cpp
-	or with cmake.
+	or with CMake (when building entire repo).
 */
 
 #include <iostream>

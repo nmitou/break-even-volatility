@@ -1,5 +1,3 @@
-// compile with g++ -I C:\local\eigen-3.4.0 -c bev.cpp
-
 #include "bev.h"
 #include "utils.h"
 #include <Eigen/Dense>
