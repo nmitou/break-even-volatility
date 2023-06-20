@@ -6,6 +6,7 @@
 #include <string>
 #include <functional>
 #include <cmath>
+#include <cassert>
 
 namespace math_constants 
 {
@@ -21,7 +22,7 @@ namespace eigen_utils
 	// Cumulatively sums an Eigen array over its rows or columns (specified as dim, 0 for rows or 1 for columns).
 	template <typename Derived>
 	void cumsum(Eigen::ArrayBase<Derived>& a, int dim) {
-		assert(dim==0 || dim==1);
+		assert(dim==0 || dim==1 && "Must choose dimension as 0 (row-wise) or 1 (col-wise).");
 		if (dim) {
 			for (auto col : a.colwise())
 				std::partial_sum(col.begin(), col.end(), col.begin());
@@ -36,7 +37,7 @@ namespace eigen_utils
 	*/
 	template <typename Derived>
 	Derived cumsum(const Eigen::MatrixBase<Derived>& m, int dim) {
-		assert(dim==0 || dim==1);
+		assert(dim==0 || dim==1 && "Must choose dimension as 0 (row-wise) or 1 (col-wise).");
 		if (dim) {
 			int nr = m.rows();
 			return Eigen::MatrixXd::Ones(nr,nr).triangularView<Eigen::Lower>() * m;

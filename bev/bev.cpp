@@ -12,10 +12,10 @@ using namespace bev;
 // Function which tests whether data inputted is valid. The Eigen array must be a column vector with enough/adequate points
 // corresponding to the terms/maturities entered. 
 void BEV::DataValid() {
-	assert(path_.cols() == 1);
+	assert(path_.cols() == 1 && "Data must be an Eigen array with dimensions (N, 1) i.e. column vector.");
 	if (maturities_.size() > 0) { // check if maturities_ has been initialised
 		for (int m : maturities_)
-			assert(path_.size() >= m*21); // otherwise not enough data for maturity which fails this test
+			assert(path_.size() >= m*21 && "Insufficient data size for maturity selected."); // otherwise not enough data for maturity which fails this test
 	}
 }
 
@@ -129,7 +129,7 @@ an array of break-even volatilities for each subpath. This corresponds to the ca
 to averaging the subpaths' BEV estimates for the final result (for that specific strike, maturity combination).*/
 Eigen::ArrayXXd BEV::SolveForBEV(double strike, double maturity) {
 	// Check there'e enough data for this maturity
-	assert(path_.size() >= maturity*21);
+	assert(path_.size() >= maturity*21 && "Insufficient data size for maturity selected.");
 
 	Eigen::ArrayXXd paths = GetSubPaths(maturity);
 	int days_to_maturity = maturity*days_per_month_;
