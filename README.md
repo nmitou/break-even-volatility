@@ -1,18 +1,53 @@
-# break-even-volatility
-Repo for calculating the break-even volatility of a security, or the skew/surface thereof for multiple strikes/terms.
+# Break-Even Volatility
 
-Building:
-install Eigen
+This repository holds a small codebase for calculating the break-even volatility (henceforth, BEV) of a financial security based on a single historical time series of asset prices. A single BEV estimate can be found for a particular strike-price/term combination, or an entire volatility skew for a range of strikes, or additionally with a range of terms, one can obtain a full volatility surface.
 
-when compiling, include eigen path
-compile each file first into object files, including eigen where necessary
-link object files after
+For more information on the break-even volatility, please see [Thesis.pdf](Thesis.pdf) for a review on the methodology. The methodology currently implemented does not involve discrete delta-hedging, but rather the discrete approximation of the continuously delta-hedged profit/loss function, named the "Traditional BEV formula" in section 2.2.
 
-Notes:
+## Library summary
 
-time to maturity:
-will treat data as daily spot prices. from the formula (adding daily hedging errors to get pnl) so data will be on
-different days and then time to maturity in formula will be remaining days/252. assuming data given is only available in business days
-ie the user will have filtered days which should not have any data
-simplifying assumption: 21 days per mpnth
-maturities vector entered with months
+In the root directory, we have [main.cpp](main.cpp) and a data file [GOOG.csv](GOOG.csv) holding five years of Alphabet Inc.'s (GOOG) share price history downloaded from [Yahoo Finance](https://finance.yahoo.com/quote/GOOG/history?p=GOOG). [main.cpp](main.cpp) forms the first minimum working example, with more available in the [examples](examples) directory. One can substitute their own data into the root directory and modify [main.cpp](main.cpp) accordingly.
+
+In the [bev](bev) directory, we have the BEV class declaration and definition in [bev.h](bev/bev.h) and [bev.cpp](bev/bev.cpp), respectively. This class allows users to run the break-even volatility method on data inputted from the CSV's filepath or from an [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) array, on a range of specified strikes and maturities.
+
+Supporting the BEV class is a number of utility functions found in the [utils](bev/utils) subdirectory. The functions' declarations and implementations have also been separated, except for the cumsum template functions and NormPDF function which operate on Eigen arrays or matrices. Other functions include data processing and simulation, root finding algorithms for the BEV calculation and a function with some nicer formatting for command-line output of BEV results.
+
+## Getting started
+
+### Requirements
+
+This codebase was built and tested using GCC (g++) with the C++14 standard. For building with CMake, the project was built using a recent version (3.26.4), but an earlier version will most likely suffice.
+
+User's will also need to have downloaded the [Eigen](https://eigen.tuxfamily.org/index.php?title=Main_Page) library. Eigen is a template library for linear algebra and vector, matrix and array operations (amongst others). See documentation [here](https://eigen.tuxfamily.org/dox/). This codebase was built and tested with version 3.4.0.
+
+### Building 
+
+#### With CMake
+
+If building with CMake, the only modifications the user may have to make is, firstly, to the minimum CMake version required if necessary, and secondly, to update the PATH_TO_EIGEN_LIB variable to the location of the user's Eigen library. Both of these changes occur in the top-level [CMakeLists.txt](CMakeLists.txt) file.
+
+To build, create a "build" directory and CMake does the rest. For example, from the root directory:
+```
+mkdir build
+cd build
+cmake ..
+cmake --build .
+```
+The executables will be written to their respective source's directory, i.e. root for main.cpp and in the [examples](examples) directory.
+Note: if GCC/g++ was obtained through MinGW then an additional flag may be needed on the first call to cmake as such:
+```
+cmake .. -G "MinGW Makefiles"
+```
+
+#### Without CMake
+
+Since the source files do not use/include relative paths to other header files, one must then include the paths to each header file needed when compiling separately, or when compiling and linking all libraries and sub-libraries at once. Thus, the easiest solution may be to take all header and source files and group then in one/the root directory. This saves the need for multiple include flags when compiling. However, one include flag will be needed and that is the path to the user's Eigen library. For example, with g++, command-line compilation with all files in one directory would look like:
+```
+g++ -I /path/to/eigen -c utils.cpp
+g++ -I /path/to/eigen -c bev.cpp
+g++ -I /path/to/eigen -o out main.cpp bev.o utils.o
+```
+Or in one shot:
+```
+g++ -I /path/to/eigen -o out main.cpp bev.cpp utils.cpp
+```
