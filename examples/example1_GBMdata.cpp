@@ -5,7 +5,7 @@
 	
 	Compilation: Must include paths to Eigen library, bev and utils. Must link bev.cpp and utils.cpp as well (or their respective object files).
 	Compile with (for example, if using GCC):
-		g++ -I path/to/eigen -I path/to/bev -I path/to/utils -o example1 example1_GBMdata.cpp bev.cpp utils.cpp
+		g++ -I path/to/eigen -I ../bev -I ../bev/utils -o example1 example1_GBMdata.cpp ../bev/bev.cpp ../bev/utils/utils.cpp
 	or with CMake (when building entire repo).
 */
 
