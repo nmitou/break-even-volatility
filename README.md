@@ -1,6 +1,6 @@
 # Break-Even Volatility
 
-This repository holds a small codebase for calculating the break-even volatility (henceforth, BEV) of a financial security based on a single historical time series of asset prices. A single BEV estimate can be found for a particular strike-price/term combination, or an entire volatility skew for a range of strikes, or additionally with a range of terms, one can obtain a full volatility surface.
+This repository holds a small codebase for calculating the break-even volatility (henceforth, BEV) of a financial security based on a single historical time series of asset prices. In essense, BEV is a method of calculating historical volatility, but differs from the usual annualised standard deviation of log returns which ignores any market skew/variation in pricing, if evident. A single BEV estimate can be found for a particular strike-price/maturity combination, or an entire volatility skew for a range of strikes, or additionally with a range of terms/option maturities, one can obtain a full volatility surface.
 
 For more information on the break-even volatility, please see [Thesis.pdf](Thesis.pdf) for a review on the methodology. The methodology currently implemented does not involve discrete delta-hedging, but rather the discrete approximation of the continuously delta-hedged profit/loss function, named the "Traditional BEV formula" in section 2.2.
 
