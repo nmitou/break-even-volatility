@@ -33,7 +33,8 @@ cd build
 cmake ..
 cmake --build .
 ```
-The executables will be written to their respective source's directory, i.e. root for main.cpp and in the [examples](examples) directory.
+The executables will be written to their respective source's directory, not the build directory, i.e. root for main.cpp and in the [examples](examples) directory.
+
 Note: if GCC/g++ was obtained through MinGW then an additional flag may be needed on the first call to cmake as such:
 ```
 cmake .. -G "MinGW Makefiles"
