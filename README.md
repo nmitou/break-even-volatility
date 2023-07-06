@@ -42,13 +42,18 @@ cmake .. -G "MinGW Makefiles"
 
 #### Without CMake
 
-Since the source files do not use/include relative paths to other header files, one must then include the paths to each header file needed when compiling separately, or when compiling and linking all libraries and sub-libraries at once. Thus, the easiest solution may be to take all header and source files and group then in one/the root directory. This saves the need for multiple include flags when compiling. However, one include flag will be needed and that is the path to the user's Eigen library. For example, with g++, command-line compilation with all files in one directory would look like:
+Since the source files do not use/include relative paths to other header files, one must then include the paths to each header file needed when compiling separately, or when compiling and linking all libraries and sub-libraries at once. Thus, the easiest solution may be to take all header and source files and group them in one/the root directory. This saves the need for multiple include flags when compiling. However, one include flag will be needed and that is the path to the user's Eigen library. For example, with g++, command-line compilation with all files in one directory would look like:
 ```
-g++ -I /path/to/eigen -c utils.cpp
-g++ -I /path/to/eigen -c bev.cpp
-g++ -I /path/to/eigen -o out main.cpp bev.o utils.o
+g++ -I path/to/eigen -c utils.cpp
+g++ -I path/to/eigen -c bev.cpp
+g++ -I path/to/eigen -o out main.cpp bev.o utils.o
 ```
 Or in one shot:
 ```
-g++ -I /path/to/eigen -o out main.cpp bev.cpp utils.cpp
+g++ -I path/to/eigen -o out main.cpp bev.cpp utils.cpp
 ```
+Keeping the repository's structure as is, the previous line would rather look like:
+```
+g++ -I path/to/eigen -I bev -I bev/utils -o out main.cpp bev/bev.cpp bev/utils/utils.cpp
+```
+The former, multiline case would change similarly if the bev and utils object files were to be created separately.
