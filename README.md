@@ -57,8 +57,3 @@ Keeping the repository's structure as is, the previous line would rather look li
 g++ -I path/to/eigen -I bev -I bev/utils -o out main.cpp bev/bev.cpp bev/utils/utils.cpp
 ```
 The former, multiline case would change similarly if the bev and utils object files were to be created separately.
-
----
-
-<meta name="google-site-verification" content="MgrulfUEQbJ3kBec2s6QiGPTktQydZC80OEagsz-vmo" />
-
