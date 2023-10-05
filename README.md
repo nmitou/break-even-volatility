@@ -1,8 +1,8 @@
 # Break-Even Volatility
 
-This repository holds a small codebase for calculating the break-even volatility (henceforth, BEV) of a financial security based on a single historical time series of asset prices. A single BEV estimate can be found for a particular strike-price/term combination, or an entire volatility skew for a range of strikes, or additionally with a range of terms, one can obtain a full volatility surface.
+This repository holds a small codebase for calculating the break-even volatility (henceforth, BEV) of a financial security based on a single historical time series of asset prices. In essense, BEV is a method of calculating historical volatility, but differs from the usual annualised standard deviation of log returns which ignores any market skew/variation in pricing, if evident. A single BEV estimate can be found for a particular strike-price/maturity combination, or an entire volatility skew for a range of strikes, or additionally with a range of terms/option maturities, one can obtain a full volatility surface.
 
-For more information on the break-even volatility, please see [Thesis.pdf](Thesis.pdf) for a review on the methodology. The methodology currently implemented does not involve discrete delta-hedging, but rather the discrete approximation of the continuously delta-hedged profit/loss function, named the "Traditional BEV formula" in section 2.2.
+For more information on the break-even volatility, please see [this review](https://open.uct.ac.za/handle/11427/30980) of the methodology. The methodology currently implemented does not involve discrete delta-hedging, but rather the discrete approximation of the continuously delta-hedged profit/loss function, named the "Traditional BEV formula" in section 2.2.
 
 ## Library summary
 
@@ -33,7 +33,8 @@ cd build
 cmake ..
 cmake --build .
 ```
-The executables will be written to their respective source's directory, i.e. root for main.cpp and in the [examples](examples) directory.
+The executables will be written to their respective source's directory, not the build directory, i.e. root for main.cpp and in the [examples](examples) directory.
+
 Note: if GCC/g++ was obtained through MinGW then an additional flag may be needed on the first call to cmake as such:
 ```
 cmake .. -G "MinGW Makefiles"
@@ -41,13 +42,18 @@ cmake .. -G "MinGW Makefiles"
 
 #### Without CMake
 
-Since the source files do not use/include relative paths to other header files, one must then include the paths to each header file needed when compiling separately, or when compiling and linking all libraries and sub-libraries at once. Thus, the easiest solution may be to take all header and source files and group then in one/the root directory. This saves the need for multiple include flags when compiling. However, one include flag will be needed and that is the path to the user's Eigen library. For example, with g++, command-line compilation with all files in one directory would look like:
+Since the source files do not use/include relative paths to other header files, one must then include the paths to each header file needed when compiling separately, or when compiling and linking all libraries and sub-libraries at once. Thus, the easiest solution may be to take all header and source files and group them in one/the root directory. This saves the need for multiple include flags when compiling. However, one include flag will be needed and that is the path to the user's Eigen library. For example, with g++, command-line compilation with all files in one directory would look like:
 ```
-g++ -I /path/to/eigen -c utils.cpp
-g++ -I /path/to/eigen -c bev.cpp
-g++ -I /path/to/eigen -o out main.cpp bev.o utils.o
+g++ -I path/to/eigen -c utils.cpp
+g++ -I path/to/eigen -c bev.cpp
+g++ -I path/to/eigen -o out main.cpp bev.o utils.o
 ```
 Or in one shot:
 ```
-g++ -I /path/to/eigen -o out main.cpp bev.cpp utils.cpp
+g++ -I path/to/eigen -o out main.cpp bev.cpp utils.cpp
 ```
+Keeping the repository's structure as is, the previous line would rather look like:
+```
+g++ -I path/to/eigen -I bev -I bev/utils -o out main.cpp bev/bev.cpp bev/utils/utils.cpp
+```
+The former, multiline case would change similarly if the bev and utils object files were to be created separately.
